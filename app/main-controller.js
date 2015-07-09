@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = function($http, $scope) {
-  var url = 'https://ethercalc.org/_/sunshine/csv.json';
+  var url = 'https://ethercalc.org/_/hackeditr/csv.json';
   $scope.options = {};
   $http.get(url).success(function(data) {
     $scope.data = data;
@@ -34,11 +34,40 @@ module.exports = function($http, $scope) {
     $scope.list = list;
   });
 
-  $scope.remove = function(scope) {
+  $scope.removeItem = function(scope) {
     scope.remove();
   };
 
   $scope.toggle = function(scope) {
     scope.toggle();
   };
+
+  $scope.save = function(scope) {
+    // transfer to csv format
+    var tagLine = scope.data[0].join(',');
+    var titleLine = scope.data[1].join(',');
+    var csvData = tagLine + '\n' + titleLine + '\n';
+    (scope.list).forEach(function(node, rowNum) {
+      csvData += node.url + ',' + node.title + ',,\n';
+      if (node.items.length > 0) {
+        node.items.forEach(function(node, rowNum) {
+          csvData += '" ' + node.url + '"' + ',' + node.title + ',,\n';
+        });
+      }
+    });
+
+    var req = {
+      method: 'PUT',
+      url: 'https://ethercalc.org/_/hackeditr',
+      headers: {
+        'Content-Type': 'text/csv'
+      },
+      data: csvData
+    }
+    $http(req)
+      .success(function(data, status) {
+      })
+      .error(function(data, status) {
+      });
+  }
 };

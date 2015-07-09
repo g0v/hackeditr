@@ -25,12 +25,14 @@
         </li>
       </ol>
     </script>
-    <div ui-tree="options">
+    <div class="col-md-6 col-sm-12" ui-tree="options">
       <ol ui-tree-nodes ng-model="list" >
         <li ng-repeat="item in list" ui-tree-node ng-include="'items_renderer.html'"></li>
       </ol>
     </div>
-    <pre class="code">{{list | json}}</pre>
+    <div class="col-md-6 col-sm-12">
+      <pre class="code">{{list | json}}</pre>
+    </div>
   </div>
 </body>
 </html>

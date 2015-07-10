@@ -15,12 +15,14 @@
   "license": "MIT",
   "devDependencies": {
     "angular": "^1.4.2",
+    "angular-sweetalert": "^1.1.0",
     "angular-ui-tree": "angular-ui-tree/angular-ui-tree",
     "beefy": "^2.1.5",
     "bootstrap": "^3.3.5",
     "browserify": "^10.2.4",
     "browserify-css": "^0.6.1",
     "shelljs": "^0.5.1",
+    "sweetalert": "^1.0.1",
     "watchify": "^3.2.3"
   }
 }

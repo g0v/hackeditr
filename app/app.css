@@ -1,5 +1,6 @@
 @import url("../node_modules/bootstrap/dist/css/bootstrap.css");
 @import url("../node_modules/angular-ui-tree/dist/angular-ui-tree.min.css");
+@import url("../node_modules/sweetalert/dist/sweetalert.css");
 
 .btn {
     margin-right: 8px;

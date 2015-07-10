@@ -3,20 +3,24 @@
   "version": "0.0.1",
   "description": "Editor for Hackfoldr",
   "scripts": {
-    "prebuild": "ln -sf ../node_modules app/node_modules",
+    "prebuild": "./utils/pre.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "browserify -t browserify-css app/app.js -o app/bundle.js",
-    "prewatch": "ln -sf ../node_modules app/node_modules",
-    "watch": "watchify -t browserify-css app/app.js -o app/bundle.js -v"
+    "prewatch": "./utils/pre.js",
+    "watch": "watchify -t browserify-css app/app.js -o app/bundle.js -v",
+    "preload": "./utils/pre.js",
+    "load": "beefy app/app.js:bundle.js 8080 --live --open --index=app/index.html -d -- -t browserify-css"
   },
   "author": "Yuren Ju <yurenju@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "bootstrap": "^3.3.5",
     "angular": "^1.4.2",
     "angular-ui-tree": "angular-ui-tree/angular-ui-tree",
+    "beefy": "^2.1.5",
+    "bootstrap": "^3.3.5",
     "browserify": "^10.2.4",
     "browserify-css": "^0.6.1",
+    "shelljs": "^0.5.1",
     "watchify": "^3.2.3"
   }
 }

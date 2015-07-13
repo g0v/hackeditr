@@ -20,13 +20,15 @@ module.exports = function($http, $scope, SweetAlert) {
       var current = {
         url: line[0],
         title: line[1],
-        items: []
+        items: [],
+        first: true
       };
       if (!current.url || current.url[0] !== ' ' || !firstLv) {
         firstLv = current;
         list.push(current);
       } else {
         current.url = current.url.trim();
+        current.first = false;
         firstLv.items.push(current);
       }
       id++;

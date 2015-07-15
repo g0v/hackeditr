@@ -1,8 +1,9 @@
 'use strict';
 
-module.exports = function($http, $scope, SweetAlert) {
+module.exports = function($http, $scope, $modal) {
   var url = 'https://ethercalc.org/_/hackeditr/csv.json';
   $scope.options = {};
+
   $http.get(url).success(function(data) {
     $scope.data = data;
     let list = [];
@@ -46,46 +47,61 @@ module.exports = function($http, $scope, SweetAlert) {
 
   $scope.save = function(scope) {
     // transfer to csv format
-    SweetAlert.swal(
-      {
-        title: 'Are you sure?',
-        text: 'Your will not be able to recover this change!',
-        type: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#AEDEF4',confirmButtonText: 'Yes',
-        cancelButtonText: 'Cancel',
-        closeOnConfirm: false
-      }, function(isConfirm) {
-        if (isConfirm) {
-          var tagLine = scope.data[0].join(',');
-          var titleLine = scope.data[1].join(',');
-          var csvData = tagLine + '\n' + titleLine + '\n';
-          (scope.list).forEach(function(node) {
-            csvData += node.url + ',' + node.title + ',,\n';
-            if (node.items.length > 0) {
-              node.items.forEach(function(node) {
-                csvData += '" ' + node.url + '"' + ',' + node.title + ',,\n';
-              });
-            }
-          });
-
-          var req = {
-            method: 'PUT',
-            url: 'https://ethercalc.org/_/hackeditr',
-            headers: {
-              'Content-Type': 'text/csv'
-            },
-            data: csvData
-          };
-          $http(req)
-            .success(function(data, status) {
-              SweetAlert.swal('Saved!', 'Your change has been saved.', 'success');
-            })
-            .error(function(data, status) {
-              SweetAlert.swal('Error!', 'Your change has not been saved.', 'error');
-            });
-
-        }
+    var tagLine = scope.data[0].join(',');
+    var titleLine = scope.data[1].join(',');
+    var csvData = tagLine + '\n' + titleLine + '\n';
+    (scope.list).forEach(function(node) {
+      csvData += node.url + ',' + node.title + ',,\n';
+      if (node.items.length > 0) {
+        node.items.forEach(function(node) {
+          csvData += '" ' + node.url + '"' + ',' + node.title + ',,\n';
+        });
+      }
     });
-  }
+
+    var req = {
+      method: 'PUT',
+      url: 'https://ethercalc.org/_/hackeditr',
+      headers: {
+        'Content-Type': 'text/csv'
+      },
+      data: csvData
+    };
+    $http(req)
+      .success(function() {
+        $scope.$broadcast('success', 'Success!');
+      })
+      .error(function() {
+        $scope.$broadcast('success', 'Error! Please try again.');
+      });
+  };
+
+  $scope.open = function (pos) {
+    var modalInstance = $modal.open({
+      animation: true,
+      templateUrl: 'dialogContent.html',
+      controller: 'DialogInstanceController'
+    });
+
+    modalInstance.result.then(function (data) {
+      // pos === -1 mean this folder is first lavel node
+      var url = data.url || '';
+      var title = data.title || 'New folder';
+      var isFirstLevel = (pos === -1) ? true : false;
+      var current = {
+        url: url,
+        title: title,
+        items: [],
+        first: isFirstLevel
+      };
+
+      if (isFirstLevel) {
+        $scope.list.push(current);
+      } else {
+        var nodeData = $scope.list[pos];
+        nodeData.items.push(current);
+      }
+      $scope.$broadcast('success', 'Add a new folder. Please press "Save" button to save change!');
+    });
+  };
 };

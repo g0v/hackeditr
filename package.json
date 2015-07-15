@@ -9,12 +9,13 @@
     "prewatch": "./utils/pre.js",
     "watch": "watchify -t browserify-css app/app.js -o app/bundle.js -v",
     "preload": "./utils/pre.js",
-    "load": "beefy app/app.js:bundle.js 8080 --live --open --index=app/index.html -d -- -t browserify-css"
+    "load": "beefy app/app.js:bundle.js 8080 --cwd app --live --open --index=index.html -- -t browserify-css -o bundle.js"
   },
   "author": "Yuren Ju <yurenju@gmail.com>",
   "license": "MIT",
   "devDependencies": {
     "angular": "^1.4.2",
+    "angular-bootstrap": "^0.12.0",
     "angular-sweetalert": "^1.1.0",
     "angular-ui-tree": "angular-ui-tree/angular-ui-tree",
     "beefy": "^2.1.5",

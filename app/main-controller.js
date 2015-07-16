@@ -80,7 +80,12 @@ module.exports = function($http, $scope, $modal) {
     var modalInstance = $modal.open({
       animation: true,
       templateUrl: 'dialogContent.html',
-      controller: 'DialogInstanceController'
+      controller: 'DialogInstanceController',
+      resolve: {
+        data: function () {
+          return {title: '', url: ''};
+        }
+      }
     });
 
     modalInstance.result.then(function (data) {
@@ -101,7 +106,25 @@ module.exports = function($http, $scope, $modal) {
         var nodeData = $scope.list[pos];
         nodeData.items.push(current);
       }
-      $scope.$broadcast('success', 'Add a new folder. Please press "Save" button to save change!');
+    });
+  };
+
+  $scope.edit = function(scope) {
+    var editContent = scope.$modelValue;
+    var modalInstance = $modal.open({
+      animation: true,
+      templateUrl: 'dialogContent.html',
+      controller: 'DialogInstanceController',
+      resolve: {
+        data: function () {
+          return {title: editContent.title, url: editContent.url};
+        }
+      }
+    });
+
+    modalInstance.result.then(function (data) {
+      scope.$modelValue.title = data.title || 'New folder';
+      scope.$modelValue.url = data.url || '';
     });
   };
 };

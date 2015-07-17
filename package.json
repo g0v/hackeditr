@@ -1,6 +1,6 @@
 {
   "name": "hackeditr",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Editor for Hackfoldr",
   "scripts": {
     "prebuild": "./utils/pre.js",

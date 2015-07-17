@@ -12,6 +12,9 @@
     "load": "beefy app/app.js:bundle.js 8080 --cwd app --live --open --index=index.html -- -t browserify-css -o bundle.js"
   },
   "author": "Yuren Ju <yurenju@gmail.com>",
+  "contributors": [
+    "Chialin Shih <chialin.shr@gmail.com>"
+  ],
   "license": "MIT",
   "devDependencies": {
     "angular": "^1.4.2",

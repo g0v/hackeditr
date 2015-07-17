@@ -1,0 +1,11 @@
+language: node_js
+node_js: '0.12'
+branches:
+  only:
+    - master
+script: node utils/deploy.js
+env:
+  global:
+    - GH_REF: github.com/yurenju/hackeditr.git
+    # GH_TOKEN
+    - secure: eOAcRZWSraAlF2WTIvuP4zLz1R5VEbvN2VjDBp3p/BAKZAQm9Oss/zInW19TQTVu6MaFYwfAMwsZhJX1pCLKB6nLNIe/K5SF22//mE8ov4Wz48ffnQre4YH0DPL7Mc1pXn6HZ9/ZbmQrTVtHij29OJy95BV5B4wpI7agMSkprwwALvl90mYb40iot3cc4Y1Y1osusHRbAFly479Fhjq879dJuXCSzDM73Gv/PiSyy1ZucWKZOkhPzp3GQy9VimzxyoDp3510q0KsZCxx8MG4v+VUYoECwfZ7FvFvF2DkRIiHVwRze1dycIn+WDfceGbPkss4iBAuYNESkGxROVmNFtWBv8JJ4hw/lVXP38IAIfImm9koj2BZYF4F0nfqBMNLQhaM+Kp+NkHnCDc6ng/68c0A64OOdZNumqyiM+hHrZ9Jh8rpQNG2BBFPFDMVFmXn5kyZS/WNm2YLjXfexMMT/y6JmY9suU4daLjiY3fgD8E/fQAFiPQ0f+QSsw5mIGFybhVgSVd5X1XO+jJslwPpLU2B2jC3f4gYkbg0PGwxEP7KZT7a+usVjFK7Uq4gkDjQ35PdEWd2wjnPwl/+rQIhJqxPEdu0uchFI7d4es2djJJQ/PYJa4kjeP8LJVdOYdv4DPuL+KQ1UPVYiz//PrASqk+zN73g6vv3+/s8slKz0YQ=

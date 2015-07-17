@@ -1,0 +1,11 @@
+language: node_js
+node_js: '0.12'
+branches:
+  only:
+    - master
+script: node utils/deploy.js
+env:
+  global:
+    - GH_REF: github.com/chialin/hackeditr.git
+    # GH_TOKEN
+    - secure: BSYbxTtdxRWllrI7b4oc4qUAqgSkydSwx6t6yV9/90JR8AjnV7eMR5X9124PSkUOnnfd0AapaOzmuuTOeimnP6uZHMejbOO7Gfnja6V8kM+/niFh/R2uHzPzR9BnBHRdZpro7+2HTOPY7Gw4EsBcVN/Tw0lsHa8O2UEK5vSiRY/CBq8QVr/2KvFneTHqqWV5a5VMGUVfzMyZFMcmWi/LgkbyeKlEo7qcuc1t56E1tx9kBo/xjtBTbJnGPoB4mAOqw5JafjjJ1qySPe4xwIumpmomsXHwdblXI7bw+mcbHH6rwou6emaGFE8AvmTLMEnGMH5GGgPKpcA/dOIXfB8rN3mtJo7wqSQJX2vy++SLXZoNExcvB3yu8KCPoPWLYxsM9Uu4rGc8oRTlHHom1Q+WP4rd9rwyiCKdeGkwuVTwQ0ayM5tYYtdchugNw9FNgoEykmjlhcxv/+nI+vQxChHiu4anj/lHGcG9Gry2GBf0bXLwzQYxqqS1NSPMOBKaVUeybI8yf51zjCLQCT+Lf8DbcagAsGpkctFO5OqBJ1fMSeSwSvKOMcF3SySFoPa1x9lfpjMQtCUpAhqSAvPWJX43iMxeLW2KiIZ4rRrVsiWw0t3qeqIyvzVMPdn5HqTKyJVhDdDT+y/ngN7Mt1kf59ynpgr8nkQk9kyKBadOJGKekYE=

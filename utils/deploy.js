@@ -19,8 +19,7 @@ if (ret.code !== 0) {
   }
 }
 
-cp('-f', 'app/index.html', 'dist/index.html');
-cp('-f', 'app/dialog.html', 'dist/dialog.html');
+cp('-f', 'app/*.html', 'dist');
 cp('-Rf', 'node_modules/bootstrap/dist/fonts/*', 'dist/node_modules/bootstrap/dist/fonts');
 
 rm('-rf', 'out');

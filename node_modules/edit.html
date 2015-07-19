@@ -1,0 +1,44 @@
+<div ng-include="'dialog.html'"></div>
+<div class="container top-block">
+  <div class="page-header">
+    <h1>{{title}}</h1>
+  </div>
+  <div ng-controller="AlertMsgController">
+    <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert()">
+      {{alert.msg}}
+    </alert>
+  </div>
+  <p>
+    <a class="btn btn-link" ng-href="https://hackfoldr.org/{{hackfoldrName}}" target="_blank">See on Hackfoldr</a>
+    <a class="pull-right btn btn-primary" data-nodrag ng-click="save(this)">Save</a>
+    <a class="pull-right btn btn-info" data-nodrag ng-click="open(-1)">New folder</a>
+  </p>
+  <script type="text/ng-template" id="items_renderer.html">
+    <div ui-tree-handle>
+      <a class="btn btn-success btn-xs" data-nodrag><span class="glyphicon" ng-class="{'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed}"></span></a>
+      {{item.title}}
+      <a class="pull-right btn btn-danger btn-xs" data-nodrag ng-click="removeItem(this)">
+        <span class="glyphicon glyphicon-remove"></span>
+      </a>
+      <a class="pull-right btn btn-info btn-xs" data-nodrag ng-click="edit(this)">
+        <span class="glyphicon glyphicon-edit"></span>
+      </a>
+      <a class="pull-right btn btn-primary btn-xs" data-nodrag ng-if="item.first" ng-click="open($index)" style="margin-right: 8px;">
+        <span class="glyphicon glyphicon-plus"></span>
+      </a>
+    </div>
+    <ol ui-tree-nodes="options" ng-model="item.items" ng-class="{hidden: collapsed}">
+      <li ng-repeat="item in item.items" ui-tree-node ng-include="'items_renderer.html'">
+      </li>
+    </ol>
+  </script>
+  <div class="col-md-6 col-sm-12" ui-tree="options">
+    <ol ui-tree-nodes ng-model="list" >
+      <li ng-repeat="item in list" ui-tree-node ng-include="'items_renderer.html'"></li>
+    </ol>
+  </div>
+  <div class="col-md-6 col-sm-12">
+    <pre class="code">{{list | json}}</pre>
+  </div>
+
+</div>

@@ -8,49 +8,27 @@
   <script type="text/javascript" src="bundle.js" async defer></script>
 </head>
 <body ng-app="hackeditr">
-  <div ng-include="'dialog.html'"></div>
-  <div class="container" ng-controller="MainController">
-    <div class="page-header">
-      <h1>{{title}}</h1>
-    </div>
-    <div ng-controller="AlertMsgController">
-      <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert()">
-        {{alert.msg}}
-      </alert>
-    </div>
-
-    <p>
-      <a class="btn btn-primary" data-nodrag ng-click="save(this)">Save</a>
-      <a class="btn btn-info" data-nodrag ng-click="open(-1)">New folder</a>
-    </p>
-
-    <script type="text/ng-template" id="items_renderer.html">
-      <div ui-tree-handle>
-        <a class="btn btn-success btn-xs" data-nodrag><span class="glyphicon" ng-class="{'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed}"></span></a>
-        {{item.title}}
-        <a class="pull-right btn btn-danger btn-xs" data-nodrag ng-click="removeItem(this)">
-          <span class="glyphicon glyphicon-remove"></span>
-        </a>
-        <a class="pull-right btn btn-info btn-xs" data-nodrag ng-click="edit(this)">
-          <span class="glyphicon glyphicon-edit"></span>
-        </a>
-        <a class="pull-right btn btn-primary btn-xs" data-nodrag ng-if="item.first" ng-click="open($index)" style="margin-right: 8px;">
-          <span class="glyphicon glyphicon-plus"></span>
-        </a>
+  <!-- Fixed navbar -->
+  <nav class="navbar navbar-default navbar-fixed-top" ng-controller="MainController">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" ng-click="isCollapsed = !isCollapsed">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand">Hackeditr</a>
       </div>
-      <ol ui-tree-nodes="options" ng-model="item.items" ng-class="{hidden: collapsed}">
-        <li ng-repeat="item in item.items" ui-tree-node ng-include="'items_renderer.html'">
-        </li>
-      </ol>
-    </script>
-    <div class="col-md-6 col-sm-12" ui-tree="options">
-      <ol ui-tree-nodes ng-model="list" >
-        <li ng-repeat="item in list" ui-tree-node ng-include="'items_renderer.html'"></li>
-      </ol>
+      <div id="navbar" class="collapse navbar-collapse" ng-class="{true: '', false: 'in'}[isCollapsed]">
+        <ul class="nav navbar-nav">
+          <li ng-class="{true: 'active', false: ''}[isHomePage]"><a href="#/">Home</a></li>
+          <li ng-class="{true: '', false: 'active'}[isHomePage]"><a>Edit</a></li>
+        </ul>
+      </div>
     </div>
-    <div class="col-md-6 col-sm-12">
-      <pre class="code">{{list | json}}</pre>
-    </div>
-  </div>
+  </nav>
+  <!-- Fixed navbar -->
+  <div ng-view></div>
 </body>
 </html>

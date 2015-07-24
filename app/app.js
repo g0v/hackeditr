@@ -4,7 +4,7 @@ let angular = require('angular');
 require('angular-route');
 require('./app.css');
 require('angular-ui-tree/dist/angular-ui-tree');
-require('angular-bootstrap/dist/ui-bootstrap-tpls.min');
+require('angular-bootstrap/ui-bootstrap-tpls.min');
 
 var app = angular.module('hackeditr', ['ngRoute', 'ui.tree', 'ui.bootstrap']);
 app.controller('MainController', require('./main-controller.js'));

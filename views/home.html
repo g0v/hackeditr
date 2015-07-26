@@ -1,0 +1,22 @@
+<div class="container">
+<div class="top-block" ng-controller="AlertMsgController">
+  <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert()">
+    {{alert.msg}}
+  </alert>
+</div>
+<div class="jumbotron top-block">
+  <h1>Hackeditr</h1>
+  <p>Hackeditr help you edit Hackfoldr content easily.</p>
+  <hr/>
+  <div class="well-lg"></div>
+
+  <p class="text-primary">Please input your Hackfoldr name to start edit.</p>
+  <div class="input-group input-group-lg">
+    <span class="input-group-addon"><span class="glyphicon glyphicon-folder-open"></span></span>
+    <input type="text" class="form-control" name="hackfoldrName" ng-model="hackfoldrName" placeholder="Hackfoldr Name" ng-keyup="detectKeyPress($event)" required>
+    <span class="input-group-btn">
+      <button class="btn btn-primary" type="button" ng-click="goEdit()">Go</button>
+    </span>
+  </div>
+</div>
+</div>

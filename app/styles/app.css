@@ -1,5 +1,5 @@
-@import url("../node_modules/bootstrap/dist/css/bootstrap.css");
-@import url("../node_modules/angular-ui-tree/dist/angular-ui-tree.min.css");
+@import url("../../node_modules/bootstrap/dist/css/bootstrap.css");
+@import url("../../node_modules/angular-ui-tree/dist/angular-ui-tree.min.css");
 
 
 .btn {

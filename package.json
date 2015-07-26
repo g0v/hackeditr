@@ -1,15 +1,13 @@
 {
   "name": "hackeditr",
   "version": "0.0.2",
-  "description": "Editor for Hackfoldr",
+  "description": "Menu Editor for Hackfoldr",
   "scripts": {
     "prebuild": "node utils/pre.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "browserify -t browserify-css -t babelify app/app.js -o app/bundle.js",
-    "prewatch": "node utils/pre.js",
-    "watch": "watchify -t browserify-css -t babelify app/app.js -o app/bundle.js -v",
-    "preload": "node utils/pre.js",
-    "load": "beefy app/app.js:bundle.js 8080 --cwd app --live --open --index=index.html -- -t browserify-css -t babelify -o bundle.js"
+    "build": "browserify -t browserify-css -t babelify app/scripts/app.js -o app/bundle.js",
+    "prestart": "node utils/pre.js",
+    "start": "beefy app/scripts/app.js:bundle.js 8080 --cwd app --live --open --index=index.html -- -t browserify-css -t babelify -o bundle.js"
   },
   "author": "Yuren Ju <yurenju@gmail.com>",
   "contributors": [

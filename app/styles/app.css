@@ -46,3 +46,16 @@
     width: 970px;
   }
 }
+
+.no-data {
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #939393;
+  background-color: rgba(246, 246, 246, 0.44);
+}
+
+.title {
+  width: 100%;
+}

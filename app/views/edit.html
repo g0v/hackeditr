@@ -1,7 +1,7 @@
 <div ng-include="'views/dialog.html'"></div>
 <div class="container top-block editor">
   <div class="page-header">
-    <h1>{{title}}</h1>
+    <h1><input class="title" type="text" ng-model="title"></input></h1>
   </div>
   <div ng-controller="AlertMsgController">
     <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert()">
@@ -11,7 +11,7 @@
   <p>
     <a class="btn btn-link" ng-href="https://hackfoldr.org/{{hackfoldrName}}" target="_blank">See on Hackfoldr</a>
     <a class="pull-right btn btn-primary" data-nodrag ng-click="save(this)">Save</a>
-    <a class="pull-right btn btn-info" data-nodrag ng-click="open(-1)">New folder</a>
+    <a class="pull-right btn btn-info" data-nodrag ng-click="open(-1)">New Item</a>
   </p>
   <script type="text/ng-template" id="items_renderer.html">
     <div ui-tree-handle>
@@ -32,10 +32,13 @@
       </li>
     </ol>
   </script>
-  <div ng-class="getLayout()" class="col-sm-12" ui-tree="options">
+  <div ng-show="list.length > 0" ng-class="getLayout()" class="col-sm-12" ui-tree="options">
     <ol ui-tree-nodes ng-model="list" >
       <li ng-repeat="item in list" ui-tree-node ng-include="'items_renderer.html'"></li>
     </ol>
+  </div>
+  <div ng-hide="list.length > 0" ng-class="getLayout()" class="col-sm-12 no-data">
+    No item
   </div>
   <div ng-show="debug" ng-class="getLayout()" class="col-sm-12">
     <pre class="code">{{list | json}}</pre>

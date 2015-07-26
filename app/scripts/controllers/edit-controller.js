@@ -9,7 +9,7 @@ module.exports = function($http, $scope, $modal, $routeParams, $location) {
   $scope.hackfoldrName = hackfoldrName;
   $scope.options = {};
 
-  $http.get(url).success(function(data) {
+  function initial(data) {
     $scope.data = data;
     let list = [];
     var firstLv;
@@ -22,7 +22,7 @@ module.exports = function($http, $scope, $modal, $routeParams, $location) {
         $scope.title = line[rowNum];
         return;
       }
-      // debugger
+
       var current = {
         url: line[0],
         title: line[1],
@@ -40,6 +40,15 @@ module.exports = function($http, $scope, $modal, $routeParams, $location) {
       id++;
     });
     $scope.list = list;
+  }
+
+  $http.get(url).success(initial).error(function(data, status) {
+    if (status === 404) {
+      data = [];
+      data.push(['#網址', '#title', '#foldr expand', '#tag']);
+      data.push(['', 'Unnamed', '', '']);
+      initial(data);
+    }
   });
 
   $scope.removeItem = function(scope) {
@@ -52,6 +61,7 @@ module.exports = function($http, $scope, $modal, $routeParams, $location) {
 
   $scope.save = function(scope) {
     // transfer to csv format
+    scope.data[1][1] = scope.title;
     var tagLine = scope.data[0].join(',');
     var titleLine = scope.data[1].join(',');
     var csvData = tagLine + '\n' + titleLine + '\n';

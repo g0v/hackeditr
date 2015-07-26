@@ -1,9 +1,10 @@
 'use strict';
 
-module.exports = function($http, $scope, $modal, $routeParams) {
+module.exports = function($http, $scope, $modal, $routeParams, $location) {
   var hackfoldrName = $routeParams.hackfoldrName;
   var baseUrl = 'https://ethercalc.org/_/' + hackfoldrName;
   var url = baseUrl + '/csv.json';
+  $scope.debug = $location.search().debug;
 
   $scope.hackfoldrName = hackfoldrName;
   $scope.options = {};
@@ -130,6 +131,12 @@ module.exports = function($http, $scope, $modal, $routeParams) {
       scope.$modelValue.title = data.title || 'New folder';
       scope.$modelValue.url = data.url || '';
     });
+  };
+
+  $scope.getLayout = function() {
+    let ret = {};
+    ret['col-lg-' + ($scope.debug ? '6' : '12')] = true;
+    return ret;
   };
 
 };

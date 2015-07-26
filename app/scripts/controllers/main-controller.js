@@ -8,12 +8,6 @@ module.exports = function($scope, $location) {
     $scope.isHomePage = $location.path() === '/';
   });
 
-  $scope.detectKeyPress = function($event) {
-    if ($event.keyCode === 13) {
-      $scope.goEdit();
-    }
-  };
-
   $scope.goEdit = function() {
     var name = $scope.hackfoldrName;
     if (name) {

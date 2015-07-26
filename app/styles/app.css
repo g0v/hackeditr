@@ -40,3 +40,9 @@
 .top-block {
     margin-top: 70px;
 }
+
+@media (min-width: 1200px) {
+  .editor.container {
+    width: 970px;
+  }
+}

@@ -32,12 +32,12 @@
       </li>
     </ol>
   </script>
-  <div class="col-md-6 col-sm-12" ui-tree="options">
+  <div ng-class="getLayout()" class="col-sm-12" ui-tree="options">
     <ol ui-tree-nodes ng-model="list" >
       <li ng-repeat="item in list" ui-tree-node ng-include="'items_renderer.html'"></li>
     </ol>
   </div>
-  <div class="col-md-6 col-sm-12">
+  <div ng-show="debug" ng-class="getLayout()" class="col-sm-12">
     <pre class="code">{{list | json}}</pre>
   </div>
 

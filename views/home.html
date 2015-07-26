@@ -11,12 +11,14 @@
   <div class="well-lg"></div>
 
   <p class="text-primary">Please input your Hackfoldr name to start edit.</p>
-  <div class="input-group input-group-lg">
-    <span class="input-group-addon"><span class="glyphicon glyphicon-folder-open"></span></span>
-    <input type="text" class="form-control" name="hackfoldrName" ng-model="hackfoldrName" placeholder="Hackfoldr Name" ng-keyup="detectKeyPress($event)" required>
-    <span class="input-group-btn">
-      <button class="btn btn-primary" type="button" ng-click="goEdit()">Go</button>
-    </span>
-  </div>
+  <form ng-submit="goEdit()">
+    <div class="input-group input-group-lg">
+      <span class="input-group-addon"><span class="glyphicon glyphicon-folder-open"></span></span>
+      <input type="text" class="form-control" autofocus name="hackfoldrName" ng-model="hackfoldrName" placeholder="Hackfoldr Name" required>
+      <span class="input-group-btn">
+        <button type="submit" class="btn btn-primary">Go</button>
+      </span>
+    </div>
+  </form>
 </div>
 </div>

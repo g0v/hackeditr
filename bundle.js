@@ -1,26 +1,26 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
-module.exports = function($scope) {
+module.exports = function ($scope) {
   $scope.alerts = [];
 
-  $scope.$on('success', function(e, message) {
-      $scope.successAlert(message);
+  $scope.$on('success', function (e, message) {
+    $scope.successAlert(message);
   });
 
-  $scope.$on('error', function(e, message) {
-      $scope.errorAlert(message);
+  $scope.$on('error', function (e, message) {
+    $scope.errorAlert(message);
   });
 
-  $scope.successAlert = function(msg) {
+  $scope.successAlert = function (msg) {
     msg = msg ? msg : 'Success!';
-    $scope.alerts.push({type: 'success', msg: msg});
+    $scope.alerts.push({ type: 'success', msg: msg });
   };
-  $scope.errorAlert = function(msg) {
+  $scope.errorAlert = function (msg) {
     msg = msg ? msg : 'Error!';
-    $scope.alerts.push({type: 'danger', msg: msg});
+    $scope.alerts.push({ type: 'danger', msg: msg });
   };
-  $scope.closeAlert = function(index) {
+  $scope.closeAlert = function (index) {
     $scope.alerts.splice(index, 1);
   };
 };
@@ -30,7 +30,7 @@ var css = "/*!\n * Bootstrap v3.3.5 (http://getbootstrap.com)\n * Copyright 2011
 },{"browserify-css":13}],3:[function(require,module,exports){
 'use strict';
 
-let angular = require('angular');
+var angular = require('angular');
 require('angular-route');
 require('./app.css');
 require('angular-ui-tree/dist/angular-ui-tree');
@@ -42,30 +42,27 @@ app.controller('EditController', require('./edit-controller.js'));
 app.controller('AlertMsgController', require('./alert-controller.js'));
 app.controller('DialogInstanceController', require('./dialog-instance-controller.js'));
 
-app.config(function($routeProvider) {
-  $routeProvider
-    .when('/', {
-      templateUrl: 'home.html',
-      controller: 'MainController'
-    })
-    .when('/:hackfoldrName', {
-      templateUrl: 'edit.html',
-      controller: 'EditController'
-    })
-    .otherwise({
-      redirectTo: '/'
-    });
+app.config(function ($routeProvider) {
+  $routeProvider.when('/', {
+    templateUrl: 'home.html',
+    controller: 'MainController'
+  }).when('/:hackfoldrName', {
+    templateUrl: 'edit.html',
+    controller: 'EditController'
+  }).otherwise({
+    redirectTo: '/'
+  });
 });
 
 },{"./alert-controller.js":1,"./app.css":2,"./dialog-instance-controller.js":4,"./edit-controller.js":5,"./main-controller.js":6,"angular":12,"angular-bootstrap/ui-bootstrap-tpls.min":7,"angular-route":9,"angular-ui-tree/dist/angular-ui-tree":10}],4:[function(require,module,exports){
 'use strict';
 
-module.exports = function($scope, $modalInstance, data) {
+module.exports = function ($scope, $modalInstance, data) {
   $scope.title = data.title || '';
   $scope.url = data.url || '';
 
   $scope.ok = function () {
-    $modalInstance.close({title: $scope.title, url: $scope.url});
+    $modalInstance.close({ title: $scope.title, url: $scope.url });
   };
 
   $scope.cancel = function () {
@@ -76,7 +73,7 @@ module.exports = function($scope, $modalInstance, data) {
 },{}],5:[function(require,module,exports){
 'use strict';
 
-module.exports = function($http, $scope, $modal, $routeParams) {
+module.exports = function ($http, $scope, $modal, $routeParams) {
   var hackfoldrName = $routeParams.hackfoldrName;
   var baseUrl = 'https://ethercalc.org/_/' + hackfoldrName;
   var url = baseUrl + '/csv.json';
@@ -84,12 +81,12 @@ module.exports = function($http, $scope, $modal, $routeParams) {
   $scope.hackfoldrName = hackfoldrName;
   $scope.options = {};
 
-  $http.get(url).success(function(data) {
+  $http.get(url).success(function (data) {
     $scope.data = data;
-    let list = [];
+    var list = [];
     var firstLv;
     var id = 0;
-    data.forEach(function(line, rowNum) {
+    data.forEach(function (line, rowNum) {
       if (rowNum === 0 || !line[1]) {
         return;
       }
@@ -117,23 +114,23 @@ module.exports = function($http, $scope, $modal, $routeParams) {
     $scope.list = list;
   });
 
-  $scope.removeItem = function(scope) {
+  $scope.removeItem = function (scope) {
     scope.remove();
   };
 
-  $scope.toggle = function(scope) {
+  $scope.toggle = function (scope) {
     scope.toggle();
   };
 
-  $scope.save = function(scope) {
+  $scope.save = function (scope) {
     // transfer to csv format
     var tagLine = scope.data[0].join(',');
     var titleLine = scope.data[1].join(',');
     var csvData = tagLine + '\n' + titleLine + '\n';
-    (scope.list).forEach(function(node) {
+    scope.list.forEach(function (node) {
       csvData += node.url + ',' + node.title + ',,\n';
       if (node.items.length > 0) {
-        node.items.forEach(function(subNode) {
+        node.items.forEach(function (subNode) {
           csvData += '" ' + subNode.url + '"' + ',' + subNode.title + ',,\n';
         });
       }
@@ -147,13 +144,11 @@ module.exports = function($http, $scope, $modal, $routeParams) {
       },
       data: csvData
     };
-    $http(req)
-      .success(function() {
-        $scope.$broadcast('success', 'Success!');
-      })
-      .error(function() {
-        $scope.$broadcast('error', 'Error! Please try again.');
-      });
+    $http(req).success(function () {
+      $scope.$broadcast('success', 'Success!');
+    }).error(function () {
+      $scope.$broadcast('error', 'Error! Please try again.');
+    });
   };
 
   $scope.open = function (pos) {
@@ -162,8 +157,8 @@ module.exports = function($http, $scope, $modal, $routeParams) {
       templateUrl: 'dialogContent.html',
       controller: 'DialogInstanceController',
       resolve: {
-        data: function () {
-          return {title: '', url: ''};
+        data: function data() {
+          return { title: '', url: '' };
         }
       }
     });
@@ -172,7 +167,7 @@ module.exports = function($http, $scope, $modal, $routeParams) {
       // pos === -1 mean this folder is first lavel node
       var link = data.url || '';
       var title = data.title || 'New folder';
-      var isFirstLevel = (pos === -1) ? true : false;
+      var isFirstLevel = pos === -1 ? true : false;
       var current = {
         url: link,
         title: title,
@@ -189,15 +184,15 @@ module.exports = function($http, $scope, $modal, $routeParams) {
     });
   };
 
-  $scope.edit = function(scope) {
+  $scope.edit = function (scope) {
     var editContent = scope.$modelValue;
     var modalInstance = $modal.open({
       animation: true,
       templateUrl: 'dialogContent.html',
       controller: 'DialogInstanceController',
       resolve: {
-        data: function () {
-          return {title: editContent.title, url: editContent.url};
+        data: function data() {
+          return { title: editContent.title, url: editContent.url };
         }
       }
     });
@@ -207,27 +202,26 @@ module.exports = function($http, $scope, $modal, $routeParams) {
       scope.$modelValue.url = data.url || '';
     });
   };
-
 };
 
 },{}],6:[function(require,module,exports){
 'use strict';
 
-module.exports = function($scope, $location) {
+module.exports = function ($scope, $location) {
   $scope.hackfoldrName = '';
   $scope.isCollapsed = true;
 
-  $scope.$on('$locationChangeSuccess', function() {
+  $scope.$on('$locationChangeSuccess', function () {
     $scope.isHomePage = $location.path() === '/';
   });
 
-  $scope.detectKeyPress = function($event) {
+  $scope.detectKeyPress = function ($event) {
     if ($event.keyCode === 13) {
       $scope.goEdit();
     }
   };
 
-  $scope.goEdit = function() {
+  $scope.goEdit = function () {
     var name = $scope.hackfoldrName;
     if (name) {
       $location.path('/' + name);

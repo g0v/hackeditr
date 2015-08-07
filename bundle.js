@@ -1254,7 +1254,7 @@ module.exports = 'ngRoute';
 
 },{"./angular-route":8}],10:[function(require,module,exports){
 /**
- * @license Angular UI Tree v2.6.0
+ * @license Angular UI Tree v2.8.0
  * (c) 2010-2015. https://github.com/angular-ui-tree/angular-ui-tree
  * License: MIT
  */
@@ -1774,8 +1774,8 @@ module.exports = 'ngRoute';
 
   angular.module('ui.tree')
 
-    .directive('uiTreeNode', ['treeConfig', '$uiTreeHelper', '$window', '$document', '$timeout',
-      function (treeConfig, $uiTreeHelper, $window, $document, $timeout) {
+    .directive('uiTreeNode', ['treeConfig', 'UiTreeHelper', '$window', '$document', '$timeout',
+      function (treeConfig, UiTreeHelper, $window, $document, $timeout) {
         return {
           require: ['^uiTreeNodes', '^uiTree'],
           restrict: 'A',
@@ -1812,7 +1812,8 @@ module.exports = 'ngRoute';
             }
             scope.init(controllersArr);
 
-            scope.collapsed = !!$uiTreeHelper.getNodeAttribute(scope, 'collapsed');
+            scope.collapsed = !!UiTreeHelper.getNodeAttribute(scope, 'collapsed');
+            scope.sourceOnly = scope.nodropEnabled || scope.$treeScope.nodropEnabled;
 
             scope.$watch(attrs.collapsed, function (val) {
               if ((typeof val) == 'boolean') {
@@ -1821,7 +1822,7 @@ module.exports = 'ngRoute';
             });
 
             scope.$watch('collapsed', function (val) {
-              $uiTreeHelper.setNodeAttribute(scope, 'collapsed', val);
+              UiTreeHelper.setNodeAttribute(scope, 'collapsed', val);
               attrs.$set('collapsed', val);
             });
 
@@ -1837,6 +1838,7 @@ module.exports = 'ngRoute';
               // the element which is clicked.
               var eventElm = angular.element(e.target),
                 eventScope = eventElm.scope(),
+                cloneElm = element.clone(),
                 eventElmTagName, tagName,
                 eventObj, tdElm, hStyle;
               if (!eventScope || !eventScope.$type) {
@@ -1861,7 +1863,7 @@ module.exports = 'ngRoute';
 
               // check if it or it's parents has a 'data-nodrag' attribute
               while (eventElm && eventElm[0] && eventElm[0] != element) {
-                if ($uiTreeHelper.nodrag(eventElm)) { // if the node mark as `nodrag`, DONOT drag it.
+                if (UiTreeHelper.nodrag(eventElm)) { // if the node mark as `nodrag`, DONOT drag it.
                   return;
                 }
                 eventElm = eventElm.parent();
@@ -1876,10 +1878,10 @@ module.exports = 'ngRoute';
                 e.originalEvent.uiTreeDragging = true;
               }
               e.preventDefault();
-              eventObj = $uiTreeHelper.eventObj(e);
+              eventObj = UiTreeHelper.eventObj(e);
 
               firstMoving = true;
-              dragInfo = $uiTreeHelper.dragInfo(scope);
+              dragInfo = UiTreeHelper.dragInfo(scope);
 
               // Fire dragStart callback
               scope.$apply(function () {
@@ -1901,11 +1903,14 @@ module.exports = 'ngRoute';
               if (config.hiddenClass) {
                 hiddenPlaceElm.addClass(config.hiddenClass);
               }
-              pos = $uiTreeHelper.positionStarted(eventObj, scope.$element);
-              placeElm.css('height', $uiTreeHelper.height(scope.$element) + 'px');
+
+              pos = UiTreeHelper.positionStarted(eventObj, scope.$element);
+              placeElm.css('height', UiTreeHelper.height(scope.$element) + 'px');
+              placeElm.css('width', UiTreeHelper.width(scope.$element) + 'px');
+
               dragElm = angular.element($window.document.createElement(scope.$parentNodesScope.$element.prop('tagName')))
                 .addClass(scope.$parentNodesScope.$element.attr('class')).addClass(config.dragClass);
-              dragElm.css('width', $uiTreeHelper.width(scope.$element) + 'px');
+              dragElm.css('width', UiTreeHelper.width(scope.$element) + 'px');
               dragElm.css('z-index', 9999);
 
               // Prevents cursor to change rapidly in Opera 12.16 and IE when dragging an element
@@ -1915,9 +1920,16 @@ module.exports = 'ngRoute';
                 $document.find('body').css({'cursor': hStyle.cursor + '!important'});
               }
 
+              if (scope.sourceOnly) {
+                placeElm.css('display', 'none');
+              }
               scope.$element.after(placeElm);
               scope.$element.after(hiddenPlaceElm);
-              dragElm.append(scope.$element);
+              if (dragInfo.isClone() && scope.sourceOnly) {
+                dragElm.append(cloneElm);
+              } else {
+                dragElm.append(scope.$element);
+              }
               $document.find('body').append(dragElm);
               dragElm.css({
                 'left': eventObj.pageX - pos.offsetX + 'px',
@@ -1940,7 +1952,7 @@ module.exports = 'ngRoute';
             };
 
             dragMove = function (e) {
-              var eventObj = $uiTreeHelper.eventObj(e),
+              var eventObj = UiTreeHelper.eventObj(e),
                 prev,
                 next,
                 leftElmPos,
@@ -2008,7 +2020,7 @@ module.exports = 'ngRoute';
                   window.scrollBy(0, -10);
                 }
 
-                $uiTreeHelper.positionMoved(e, pos, firstMoving);
+                UiTreeHelper.positionMoved(e, pos, firstMoving);
                 if (firstMoving) {
                   firstMoving = false;
                   return;
@@ -2045,7 +2057,7 @@ module.exports = 'ngRoute';
 
                 // check if add it as a child node first
                 // todo decrease is unused
-                decrease = ($uiTreeHelper.offset(dragElm).left - $uiTreeHelper.offset(placeElm).left) >= config.threshold;
+                decrease = (UiTreeHelper.offset(dragElm).left - UiTreeHelper.offset(placeElm).left) >= config.threshold;
                 targetX = eventObj.pageX - $window.document.body.scrollLeft;
                 targetY = eventObj.pageY - (window.pageYOffset || $window.document.documentElement.scrollTop);
 
@@ -2079,6 +2091,11 @@ module.exports = 'ngRoute';
                     return;
                   }
 
+                  // Show the placeholder if it was hidden for nodrop-enabled and this is a new tree
+                  if (targetNode.$treeScope && !targetNode.$parent.nodropEnabled && !targetNode.$treeScope.nodropEnabled) {
+                    placeElm.css('display', 'block');
+                  }
+
                   if (targetNode.$type == 'uiTree' && targetNode.dragEnabled) {
                     isEmpty = targetNode.isEmpty(); // Check if it's empty tree
                   }
@@ -2106,9 +2123,9 @@ module.exports = 'ngRoute';
                     }
                   } else if (targetNode.dragEnabled()) { // drag enabled
                     targetElm = targetNode.$element; // Get the element of ui-tree-node
-                    targetOffset = $uiTreeHelper.offset(targetElm);
-                    targetBefore = targetNode.horizontal ? eventObj.pageX < (targetOffset.left + $uiTreeHelper.width(targetElm) / 2)
-                      : eventObj.pageY < (targetOffset.top + $uiTreeHelper.height(targetElm) / 2);
+                    targetOffset = UiTreeHelper.offset(targetElm);
+                    targetBefore = targetNode.horizontal ? eventObj.pageX < (targetOffset.left + UiTreeHelper.width(targetElm) / 2)
+                      : eventObj.pageY < (targetOffset.top + UiTreeHelper.height(targetElm) / 2);
 
                     if (targetNode.$parentNodesScope.accept(scope, targetNode.index())) {
                       if (targetBefore) {
@@ -2316,14 +2333,14 @@ module.exports = 'ngRoute';
 
   /**
    * @ngdoc service
-   * @name ui.tree.service:$helper
+   * @name ui.tree.service:UiTreeHelper
    * @requires ng.$document
    * @requires ng.$window
    *
    * @description
    * angular-ui-tree.
    */
-    .factory('$uiTreeHelper', ['$document', '$window',
+    .factory('UiTreeHelper', ['$document', '$window',
       function ($document, $window) {
         return {
 
@@ -2388,6 +2405,7 @@ module.exports = 'ngRoute';
             return {
               source: node,
               sourceInfo: {
+                cloneModel: node.$treeScope.cloneEnabled === true ? angular.copy(node.$modelValue) : undefined,
                 nodeScope: node,
                 index: node.index(),
                 nodesScope: node.$parentNodesScope
@@ -2434,9 +2452,21 @@ module.exports = 'ngRoute';
                 return null;
               },
 
+              isClone: function () {
+                return this.source.$treeScope.cloneEnabled === true;
+              },
+
+              clonedNode: function (node) {
+                return angular.copy(node);
+              },
+
               isDirty: function () {
                 return this.source.$parentNodesScope != this.parent ||
                   this.source.index() != this.index;
+              },
+
+              isForeign: function () {
+                return this.source.$treeScope !== this.parent.$treeScope;
               },
 
               eventArgs: function (elements, pos) {
@@ -2452,28 +2482,24 @@ module.exports = 'ngRoute';
               },
 
               apply: function () {
-                //no drop so no changes
-                if (this.parent.$treeScope.nodropEnabled !== true) {
-                  var nodeData = this.source.$modelValue;
 
-                  // node was dropped in the same place - do nothing
-                  if (this.index === this.sourceInfo.index) {
-                    if ((this.source.$parentNodeScope && (this.parent.$id === this.source.$parentNodeScope.$id)) ||
-                        (this.source.$parentNodesScope && (this.parent.$id === this.source.$parentNodesScope.$id))) {
-                      return;
-                    }
-                  }
+                var nodeData = this.source.$modelValue;
 
-                  //cloneEnabled so do not remove from source
-                  if (this.source.$treeScope.cloneEnabled !== true) {
-                    this.source.remove();
-                  }
+                // nodrop enabled on tree or parent
+                if (this.parent.nodropEnabled || this.parent.$treeScope.nodropEnabled) {
+                  return;
+                }
 
-                  //if the tree is set to cloneEnabled and source === dest do not insert node or it will cause a duplicate in the repeater
-                  if ((this.source.$treeScope.cloneEnabled === true) && (this.source.$treeScope === this.parent.$treeScope)) {
-                    return false;
-                  }
+                // node was dropped in the same place - do nothing
+                if (!this.isDirty()) {
+                  return;
+                }
 
+                // cloneEnabled and cross-tree so copy and do not remove from source
+                if (this.isClone() && this.isForeign()) {
+                  this.parent.insertNode(this.index, angular.copy(nodeData));
+                } else { // Any other case, remove and reinsert
+                  this.source.remove();
                   this.parent.insertNode(this.index, nodeData);
                 }
               }
@@ -2482,8 +2508,8 @@ module.exports = 'ngRoute';
 
           /**
            * @ngdoc method
-           * @name hippo.theme#height
-           * @methodOf ui.tree.service:$helper
+           * @name ui.tree#height
+           * @methodOf ui.tree.service:UiTreeHelper
            *
            * @description
            * Get the height of an element.
@@ -2497,8 +2523,8 @@ module.exports = 'ngRoute';
 
           /**
            * @ngdoc method
-           * @name hippo.theme#width
-           * @methodOf ui.tree.service:$helper
+           * @name ui.tree#width
+           * @methodOf ui.tree.service:UiTreeHelper
            *
            * @description
            * Get the width of an element.
@@ -2512,8 +2538,8 @@ module.exports = 'ngRoute';
 
           /**
            * @ngdoc method
-           * @name hippo.theme#offset
-           * @methodOf ui.nestedSortable.service:$helper
+           * @name ui.tree#offset
+           * @methodOf ui.nestedSortable.service:UiTreeHelper
            *
            * @description
            * Get the offset values of an element.
@@ -2534,8 +2560,8 @@ module.exports = 'ngRoute';
 
           /**
            * @ngdoc method
-           * @name hippo.theme#positionStarted
-           * @methodOf ui.tree.service:$helper
+           * @name ui.tree#positionStarted
+           * @methodOf ui.tree.service:UiTreeHelper
            *
            * @description
            * Get the start position of the target element according to the provided event properties.

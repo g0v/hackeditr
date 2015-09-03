@@ -8,36 +8,84 @@ module.exports = function($http, $scope, $modal, $routeParams, $location) {
 
   $scope.hackfoldrName = hackfoldrName;
   $scope.options = {};
-
+  $scope.addBtn = {
+    isopen: false
+  };
   function initial(data) {
     $scope.data = data;
     let list = [];
+    var isTopLink = false;
     var firstLv;
-    var id = 0;
-    data.forEach(function(line, rowNum) {
-      if (rowNum === 0 || !line[1]) {
-        return;
-      }
-      if (rowNum === 1) {
-        $scope.title = line[rowNum];
-        return;
-      }
 
+    data.forEach(function(line, rowNum) {
+      /* current.type:
+       *   1. comment
+       *   2. topFolder
+       *   3. folder
+       *   4. topLink
+       *   5. link
+       */
       var current = {
         url: line[0],
         title: line[1],
+        property: line[2],
+        tag: line[3],
         items: [],
-        first: true
+        type: ''
       };
-      if (!current.url || current.url[0] !== ' ' || !firstLv) {
+
+      var isEmpty = true;
+      line.forEach(function(content) {
+        if (content) {
+          isEmpty = false;
+          return;
+        }
+      });
+      if (isEmpty) {
+        current.type = 'comment';
+        list.push(current);
+        return;
+      }
+
+      line.forEach(function(content) {
+        if (/^#/g.test(content)) {
+          current.type = 'comment';
+          return;
+        }
+      });
+      if (current.type === 'comment') {
+        list.push(current);
+        return;
+      }
+
+      if (/^</g.test(current.url)) {
+        // link will be top link below this setting
+        isTopLink = true;
+        current.type = 'comment';
+        list.push(current);
+        return;
+      }
+
+      if (!$scope.title && current.title) {
+        $scope.title = current.title;
+        current.type = 'topFolder';
+        list.push(current);
+        return;
+      }
+
+      if (!current.url || />/g.test(current.url)) {
         firstLv = current;
+        current.type = 'folder';
+        list.push(current);
+        isTopLink = false;
+      } else if (isTopLink || !firstLv) {
+        current.type = 'topLink';
         list.push(current);
       } else {
         current.url = current.url.trim();
-        current.first = false;
+        current.type = 'link';
         firstLv.items.push(current);
       }
-      id++;
     });
     $scope.list = list;
   }
@@ -45,7 +93,7 @@ module.exports = function($http, $scope, $modal, $routeParams, $location) {
   $http.get(url).success(initial).error(function(data, status) {
     if (status === 404) {
       data = [];
-      data.push(['#網址', '#title', '#foldr expand', '#tag']);
+      data.push(['#url', '#title', '#foldr expand', '#tag']);
       data.push(['', 'Unnamed', '', '']);
       initial(data);
     }
@@ -61,15 +109,23 @@ module.exports = function($http, $scope, $modal, $routeParams, $location) {
 
   $scope.save = function(scope) {
     // transfer to csv format
-    scope.data[1][1] = scope.title;
-    var tagLine = scope.data[0].join(',');
-    var titleLine = scope.data[1].join(',');
-    var csvData = tagLine + '\n' + titleLine + '\n';
+    var csvData = '';
+    var isFolderLastNode = false;
     (scope.list).forEach(function(node) {
-      csvData += node.url + ',' + node.title + ',,\n';
+      if (node.type === 'folder') {
+        isFolderLastNode = true;
+      }
+      if (/^</g.test(node.url)) {
+        isFolderLastNode = false;
+      }
+      if (node.type === 'topLink' && isFolderLastNode) {
+        csvData += ['<', '', '', ''].join(',') + '\n';
+      }
+      csvData += [node.url, node.title, node.property, node.tag].join(',') + '\n';
       if (node.items.length > 0) {
         node.items.forEach(function(subNode) {
-          csvData += '" ' + subNode.url + '"' + ',' + subNode.title + ',,\n';
+          csvData += [subNode.url, subNode.title, subNode.property, subNode.tag]
+            .join(',') + '\n';
         });
       }
     });
@@ -91,14 +147,17 @@ module.exports = function($http, $scope, $modal, $routeParams, $location) {
       });
   };
 
-  $scope.open = function (pos) {
+  $scope.open = function (pos, type) {
+    if (!type) {
+      type = (this.$modelValue.type === 'folder') ? 'link' : 'topLink';
+    }
     var modalInstance = $modal.open({
       animation: true,
       templateUrl: 'dialogContent.html',
       controller: 'DialogInstanceController',
       resolve: {
         data: function () {
-          return {title: '', url: ''};
+          return {title: '', url: '', tag: '', type: type};
         }
       }
     });
@@ -106,17 +165,21 @@ module.exports = function($http, $scope, $modal, $routeParams, $location) {
     modalInstance.result.then(function (data) {
       // pos === -1 mean this folder is first lavel node
       var link = data.url || '';
-      var title = data.title || 'New folder';
-      var isFirstLevel = (pos === -1) ? true : false;
+      var title = data.title || 'New title';
+      var tag = data.tag || '';
       var current = {
         url: link,
         title: title,
+        property: '',
+        tag: tag,
         items: [],
-        first: isFirstLevel
+        type: type
       };
 
-      if (isFirstLevel) {
+      if (pos === -1) {
         $scope.list.push(current);
+      } else if (type === 'topLink') {
+        $scope.list.splice(pos+1, 0, current);
       } else {
         var nodeData = $scope.list[pos];
         nodeData.items.push(current);
@@ -132,14 +195,20 @@ module.exports = function($http, $scope, $modal, $routeParams, $location) {
       controller: 'DialogInstanceController',
       resolve: {
         data: function () {
-          return {title: editContent.title, url: editContent.url};
+          return {
+            title: editContent.title,
+            url: editContent.url,
+            tag: editContent.tag,
+            type: editContent.type
+          };
         }
       }
     });
 
     modalInstance.result.then(function (data) {
-      scope.$modelValue.title = data.title || 'New folder';
+      scope.$modelValue.title = data.title || 'New title';
       scope.$modelValue.url = data.url || '';
+      scope.$modelValue.tag = data.tag || '';
     });
   };
 
@@ -149,4 +218,9 @@ module.exports = function($http, $scope, $modal, $routeParams, $location) {
     return ret;
   };
 
+  $scope.toggleDropdown = function($event) {
+    $event.preventDefault();
+    $event.stopPropagation();
+    $scope.addBtn.isopen = !$scope.addBtn.isopen;
+  };
 };

@@ -8,24 +8,47 @@
       {{alert.msg}}
     </alert>
   </div>
-  <p>
+  <div class="bottom20">
     <a class="btn btn-link" ng-href="http://beta.hackfoldr.org/{{hackfoldrName}}" target="_blank">See on Hackfoldr</a>
-    <a class="pull-right btn btn-primary" data-nodrag ng-click="save(this)">Save</a>
-    <a class="pull-right btn btn-info" data-nodrag ng-click="open(-1)">New Item</a>
-  </p>
+    <a class="pull-right btn btn-success btn-margin10" data-nodrag ng-click="save(this)">Save</a>
+    <div class="pull-right">
+     <div class="btn-group" dropdown is-open="addBtn.isopen">
+       <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle>
+        Add ... <span class="caret"></span>
+       </button>
+       <ul class="dropdown-menu">
+         <li><a ng-click="open(-1, 'topLink')">new link</a></li>
+         <li><a ng-click="open(-1, 'folder')">new folder</a></li>
+       </ul>
+     </div>
+    </div>
+  </div>
   <script type="text/ng-template" id="items_renderer.html">
     <div ui-tree-handle>
-      <a class="btn btn-success btn-xs" data-nodrag><span class="glyphicon" ng-class="{'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed}"></span></a>
+      <a class="btn btn-lg" data-nodrag ng-show="item.type === 'topFolder'">
+        <span class="glyphicon glyphicon-folder-open"></span>
+      </a>
+      <a class="btn btn-xs" data-nodrag ng-hide="item.type === 'topFolder'">
+        <span class="glyphicon" ng-class="item.type != 'folder' ? 'glyphicon glyphicon-link' : 'glyphicon glyphicon-menu-down'"></span>
+      </a>
       {{item.title}}
-      <a class="pull-right btn btn-danger btn-xs" data-nodrag ng-click="removeItem(this)">
-        <span class="glyphicon glyphicon-remove"></span>
+      <a class="pull-right btn btn-lg" data-nodrag ng-show="item.type === 'topFolder'">
+        <span class="glyphicon glyphicon-cog"></span>
       </a>
-      <a class="pull-right btn btn-info btn-xs" data-nodrag ng-click="edit(this)">
-        <span class="glyphicon glyphicon-edit"></span>
-      </a>
-      <a class="pull-right btn btn-primary btn-xs" data-nodrag ng-if="item.first" ng-click="open($index)" style="margin-right: 8px;">
-        <span class="glyphicon glyphicon-plus"></span>
-      </a>
+
+      <span class="pull-right btn-group" ng-hide="item.type === 'topFolder'">
+        <a class="btn btn-info btn-xs" data-nodrag ng-click="edit(this)">
+          <span class="glyphicon glyphicon-edit"></span>
+        </a>
+        <a class="btn btn-primary btn-xs" data-nodrag ng-class="(item.type != 'link') ? '' : 'disabled'" ng-click="open($index)">
+          <span class="glyphicon glyphicon-plus"></span>
+        </a>
+
+        <a class="btn btn-danger btn-xs" data-nodrag ng-click="removeItem(this)">
+          <span class="glyphicon glyphicon-remove"></span>
+        </a>
+      </span>
+      <span class="pull-right label label-default label-custom" ng-show="item.tag">{{item.tag}}</span>
     </div>
     <ol ui-tree-nodes="options" ng-model="item.items" ng-class="{hidden: collapsed}">
       <li ng-repeat="item in item.items" ui-tree-node ng-include="'items_renderer.html'">
@@ -33,8 +56,8 @@
     </ol>
   </script>
   <div ng-show="list.length > 0" ng-class="getLayout()" class="col-sm-12" ui-tree="options">
-    <ol ui-tree-nodes ng-model="list" >
-      <li ng-repeat="item in list" ui-tree-node ng-include="'items_renderer.html'"></li>
+    <ol ui-tree-nodes ng-model="list">
+      <li ng-repeat="item in list" ui-tree-node ng-include="'items_renderer.html'" ng-hide="item.type === 'comment'"></li>
     </ol>
   </div>
   <div ng-hide="list.length > 0" ng-class="getLayout()" class="col-sm-12 no-data">

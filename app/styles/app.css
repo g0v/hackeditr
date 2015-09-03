@@ -2,8 +2,9 @@
 @import url("../../node_modules/angular-ui-tree/dist/angular-ui-tree.min.css");
 
 
-.btn {
-    margin-right: 8px;
+.btn-margin10 {
+  margin-right: 10px;
+  margin-left: 10px;
 }
 
 .btn-bottom-sharp {
@@ -58,4 +59,13 @@
 
 .title {
   width: 100%;
+}
+
+.label-custom {
+  margin-right: 30px;
+  font-size: 100%;
+}
+
+.bottom20 {
+  margin-bottom: 20px;
 }

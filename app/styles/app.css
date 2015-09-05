@@ -69,3 +69,20 @@
 .bottom20 {
   margin-bottom: 20px;
 }
+.color-popover {
+  width: 180px;
+  white-space: normal;
+  text-align: left;
+  padding-left: 8px;
+}
+.coloricon {
+  background-color: #A6A6A6;
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.coloricon-margin {
+  margin: 8px;
+}

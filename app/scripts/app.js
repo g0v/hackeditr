@@ -14,6 +14,7 @@ app.controller('AlertMsgController',
   require('./controllers/alert-controller.js'));
 app.controller('DialogInstanceController',
   require('./controllers/dialog-instance-controller.js'));
+app.factory('colorService', require('./services/color-service.js'));
 
 app.config(function($routeProvider) {
   $routeProvider

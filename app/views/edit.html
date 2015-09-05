@@ -48,7 +48,7 @@
           <span class="glyphicon glyphicon-remove"></span>
         </a>
       </span>
-      <span class="pull-right label label-default label-custom" ng-show="item.tag">{{item.tag}}</span>
+      <span class="pull-right label label-custom" style="background-color: {{item.tagColor}}" ng-show="item.tag">{{item.tag}}</span>
     </div>
     <ol ui-tree-nodes="options" ng-model="item.items" ng-class="{hidden: collapsed}">
       <li ng-repeat="item in item.items" ui-tree-node ng-include="'items_renderer.html'">

@@ -1,9 +1,10 @@
 'use strict';
 
-module.exports = function($http, $scope, $modal, $routeParams, $location) {
+module.exports = function($http, $scope, $modal, $routeParams, $location, colorService) {
   var hackfoldrName = $routeParams.hackfoldrName;
   var baseUrl = 'https://ethercalc.org/_/' + hackfoldrName;
   var url = baseUrl + '/csv.json';
+
   $scope.debug = $location.search().debug;
 
   $scope.hackfoldrName = hackfoldrName;
@@ -11,6 +12,7 @@ module.exports = function($http, $scope, $modal, $routeParams, $location) {
   $scope.addBtn = {
     isopen: false
   };
+
   function initial(data) {
     $scope.data = data;
     let list = [];
@@ -25,11 +27,19 @@ module.exports = function($http, $scope, $modal, $routeParams, $location) {
        *   4. topLink
        *   5. link
        */
+      var tag = line[3];
+      var tagColor = '';
+      if (tag !== '' && tag.split(' ').length > 1) {
+        var subTag = tag.split(' ')[0];
+        tagColor = colorService.getHexCode(subTag);
+        tag = tag.substring(tag.indexOf(' ')+1);
+      }
       var current = {
         url: line[0],
         title: line[1],
         property: line[2],
-        tag: line[3],
+        tag: tag,
+        tagColor: tagColor,
         items: [],
         type: ''
       };
@@ -111,6 +121,7 @@ module.exports = function($http, $scope, $modal, $routeParams, $location) {
     // transfer to csv format
     var csvData = '';
     var isFolderLastNode = false;
+    var tag = '';
     (scope.list).forEach(function(node) {
       if (node.type === 'folder') {
         isFolderLastNode = true;
@@ -121,10 +132,16 @@ module.exports = function($http, $scope, $modal, $routeParams, $location) {
       if (node.type === 'topLink' && isFolderLastNode) {
         csvData += ['<', '', '', ''].join(',') + '\n';
       }
-      csvData += [node.url, node.title, node.property, node.tag].join(',') + '\n';
+      tag = (node.tag !== '')
+        ? colorService.getColorName(node.tagColor) + ' ' + node.tag
+        : '';
+      csvData += [node.url, node.title, node.property, tag].join(',') + '\n';
       if (node.items.length > 0) {
         node.items.forEach(function(subNode) {
-          csvData += [subNode.url, subNode.title, subNode.property, subNode.tag]
+          tag = (subNode.tag !== '')
+            ? colorService.getColorName(subNode.tagColor) + ' ' + subNode.tag
+            : '';
+          csvData += [subNode.url, subNode.title, subNode.property, tag]
             .join(',') + '\n';
         });
       }
@@ -157,7 +174,7 @@ module.exports = function($http, $scope, $modal, $routeParams, $location) {
       controller: 'DialogInstanceController',
       resolve: {
         data: function () {
-          return {title: '', url: '', tag: '', type: type};
+          return {title: '', url: '', tag: '', tagColor: '', type: type};
         }
       }
     });
@@ -167,11 +184,13 @@ module.exports = function($http, $scope, $modal, $routeParams, $location) {
       var link = data.url || '';
       var title = data.title || 'New title';
       var tag = data.tag || '';
+      var tagColor = data.tagColor || '';
       var current = {
         url: link,
         title: title,
         property: '',
         tag: tag,
+        tagColor: tagColor,
         items: [],
         type: type
       };
@@ -199,6 +218,7 @@ module.exports = function($http, $scope, $modal, $routeParams, $location) {
             title: editContent.title,
             url: editContent.url,
             tag: editContent.tag,
+            tagColor: editContent.tagColor,
             type: editContent.type
           };
         }
@@ -209,6 +229,7 @@ module.exports = function($http, $scope, $modal, $routeParams, $location) {
       scope.$modelValue.title = data.title || 'New title';
       scope.$modelValue.url = data.url || '';
       scope.$modelValue.tag = data.tag || '';
+      scope.$modelValue.tagColor = data.tagColor || '';
     });
   };
 

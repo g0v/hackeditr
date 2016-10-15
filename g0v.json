@@ -1,0 +1,23 @@
+{
+  "repo" :"g0v/hackeditr",
+  "author" : "yurenju",
+  "status" : "Beta",
+  "name": "g0v hackeditr",
+  "name_zh": "g0v hackeditr",
+  "description": "g0v design-guide",
+  "description_zh": "用來編輯 hackfoldr 的編輯器",
+  "homepage" : "",
+  "thumbnail" : "",
+  "document": "",
+  "repository": "https://github.com/g0v/hackeditr",
+  "licenses": ["MIT"],
+  "keywords": [
+  ],
+  "audience": [
+    "public"
+  ],
+  "products" :[],
+  "partOf": "",
+  "contributors" :[],
+  "needs" : []
+}
